@@ -6,6 +6,9 @@ resolver: lts-6.0
 # Local packages, usually specified by relative directory name
 packages:
 - '.'
+- location:
+    git: https://github.com/apauley/git-hell
+    commit: 03330031797d55f44bd1c97245497d0984005dbf
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps: []

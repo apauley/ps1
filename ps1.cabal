@@ -31,6 +31,7 @@ executable ps1
                      , turtle >= 1.2.7 && < 1.3
                      , text
                      , ps1
+                     , git-hell
   default-language:    Haskell2010
 
 test-suite ps1-test
