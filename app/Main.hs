@@ -12,7 +12,7 @@ main = do
   now <- date
   cwd <- pwd
   maybeBranch <- currentBranchOrNothing
-  let prompt = format (s%"\n"%s%""%fp%"$ ") (showText now) (branch maybeBranch) (basename cwd)
+  let prompt = format (s%"\n"%s%fp%"$ ") (showText now) (branch maybeBranch) (basename cwd)
   echo prompt
 
 branch :: Maybe Text -> Text
