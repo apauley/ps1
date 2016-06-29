@@ -11,9 +11,14 @@ main :: IO ()
 main = do
   now <- date
   cwd <- pwd
-  branch <- currentBranchOrEmptyText
-  let prompt = format (s%"\n"%s%" "%fp%"$ ") (showText now) branch (basename cwd)
+  maybeBranch <- currentBranchOrNothing
+  let prompt = format (s%"\n"%s%""%fp%"$ ") (showText now) (branch maybeBranch) (basename cwd)
   echo prompt
+
+branch :: Maybe Text -> Text
+branch maybeBranch = case maybeBranch of
+  Just b  -> format (s%" ") b
+  Nothing -> ""
 
 showText :: Show a => a -> Text
 showText s = pack $ show s
