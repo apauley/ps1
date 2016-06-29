@@ -4,15 +4,15 @@ module Main where
 
 import Turtle
 import Prelude hiding (FilePath)
-import Data.Text (pack)
 import GitHellLib
+import Data.Text (pack)
 
 main :: IO ()
 main = do
   now <- date
   cwd <- pwd
-  stdout currentBranch
-  let prompt = format (s%"\n"%fp%"$ ") (showText now) (basename cwd)
+  branch <- currentBranchOrEmptyText
+  let prompt = format (s%"\n"%s%" "%fp%"$ ") (showText now) branch (basename cwd)
   echo prompt
 
 showText :: Show a => a -> Text
