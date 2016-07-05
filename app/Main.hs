@@ -5,7 +5,7 @@ module Main where
 import Turtle
 import Prelude hiding (FilePath)
 import GitHellLib
-import Data.Text (pack, unpack)
+import qualified Data.Text as T (pack, unpack)
 import qualified Control.Foldl as Fold
 
 main :: IO ()
@@ -23,7 +23,7 @@ columns = do
   let cols = inproc "/usr/bin/env" ["tput", "cols"] empty
   maybeCols <- fold cols Fold.head
   case maybeCols of
-    Just c  -> return $ read $ unpack c
+    Just c  -> return $ read $ T.unpack c
     Nothing -> return 80
 
 branch :: Maybe Text -> Text
@@ -32,4 +32,4 @@ branch maybeBranch = case maybeBranch of
   Nothing -> ""
 
 showText :: Show a => a -> Text
-showText s = pack $ show s
+showText s = T.pack $ show s
