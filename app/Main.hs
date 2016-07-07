@@ -5,7 +5,8 @@ module Main where
 import Turtle
 import Prelude hiding (FilePath)
 import GitHellLib
-import qualified Data.Text as T (pack, unpack, justifyRight)
+import ANSIColourLib
+import qualified Data.Text as T (justifyRight, pack, unpack)
 import Data.Maybe
 import qualified Control.Foldl as Fold
 
@@ -16,7 +17,7 @@ main = do
   maybeBranch <- currentBranchOrNothing
   cols <- columns
   let rightAlignedDate = T.justifyRight (cols-1) '—' $ format (" "%utc) now
-  let prompt = format (s%"\n"%s%fp%"$ ") rightAlignedDate (branch maybeBranch) (basename cwd)
+  let prompt = format (s%"\n"%s%"\n"%fp%"$ ") rightAlignedDate (branch maybeBranch) (basename cwd)
   echo prompt
 
 columns :: IO Int
@@ -28,4 +29,4 @@ columns = do
     Nothing -> return 80
 
 branch :: Maybe Text -> Text
-branch maybeBranch = fromMaybe "" $ fmap (format (s%" ")) maybeBranch
+branch maybeBranch = fromMaybe "" $ fmap (format (s%" ") . greenFG) maybeBranch
