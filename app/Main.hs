@@ -9,6 +9,8 @@ import GitHellLib (git, currentBranch)
 import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
 import qualified Data.Text as T (justifyRight, pack, unpack, words)
 import Data.Maybe
+import qualified Data.Time.LocalTime as Time
+import qualified Data.Time.Format as TF
 import qualified Control.Foldl as Fold
 
 main :: IO ()
@@ -21,10 +23,11 @@ main = do
 
 getTimeLine :: IO Text
 getTimeLine = do
-  now  <- date
+  now  <- Time.getZonedTime
   cols <- terminalColumns
-  let time = T.justifyRight (cols-1) '—' $ format (" "%utc) now
-  return $ darkGreyFG time
+  let time = T.pack $ TF.formatTime TF.defaultTimeLocale "%Y-%m-%d %H:%M:%S" now
+  let line = T.justifyRight (cols-1) '—' $ format (" "%s) time
+  return $ darkGreyFG line
 
 getGitLine :: IO Text
 getGitLine = do

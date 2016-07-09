@@ -34,6 +34,7 @@ executable ps1
                      , git-hell
                      , hsh
                      , foldl
+                     , time
   default-language:    Haskell2010
 
 test-suite ps1-test
