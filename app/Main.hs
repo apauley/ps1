@@ -6,8 +6,8 @@ import Turtle
 import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (git, currentBranch)
-import ANSIColourLib (blueFG, greenFG, yellowFG)
-import qualified Data.Text as T (justifyRight, pack, unpack)
+import ANSIColourLib (cyanFG, greenFG, yellowFG, lightRedFG)
+import qualified Data.Text as T (justifyRight, pack, unpack, words)
 import Data.Maybe
 import qualified Control.Foldl as Fold
 
@@ -26,8 +26,12 @@ getGitLine = do
   shortStatus <- maybeFirstLine $ git "status" ["--porcelain"]
   let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
   branch <- colourOrEmpty branchColour currentBranch
-  status <- colourOrEmpty blueFG gitStatusUpstream
+  status <- colourOrEmpty upstreamColour gitStatusUpstream
   return $ format (s%" "%s) branch status
+
+upstreamColour :: Text -> Text
+upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
+  where upToDate = elem "up-to-date" $ T.words txt
 
 gitStatusUpstream :: Shell Text
 gitStatusUpstream = do
