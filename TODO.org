@@ -7,7 +7,9 @@ CLOSED: [2016-07-09 Sat 20:25]
 CLOSED: [2016-07-09 Sat 20:59]
 * DONE Don't show blank lines if not in a repo
 CLOSED: [2016-07-09 Sat 21:13]
-* Single-line prompt
+* DONE Single-line prompt
+CLOSED: [2016-07-09 Sat 22:15]
+* Add --no-colour option
 * Better pwd
 * Super-user prompt (#)
 * Track other upstream branch (master/develop) if on different branch (rebase needed)
