@@ -48,7 +48,8 @@ upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
 gitStatusUpstream :: Shell Text
 gitStatusUpstream = do
   let searchText = "Your branch "
-  sed (searchText *> return "") $ grep (prefix searchText) (git "status" ["--long"])
+  let st = sed (searchText *> return "") $ grep (prefix searchText) (git "status" ["--long"])
+  sed ((choice [",", ".", "'"]) *> return "") st
 
 colourOrEmpty :: (Text -> Text) -> Shell Text -> IO Text
 colourOrEmpty colourFun shellText = do

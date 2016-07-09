@@ -1,4 +1,5 @@
-* Get rid of punctuation in upstream status
+* DONE Get rid of punctuation in upstream status
+CLOSED: [2016-07-09 Sat 21:29]
 ** , ' .
 * DONE Display local time
 CLOSED: [2016-07-09 Sat 20:25]
