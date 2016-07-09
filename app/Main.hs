@@ -4,6 +4,7 @@ module Main where
 
 import Turtle
 import Prelude hiding (FilePath)
+import HSHLib (maybeFirstLine)
 import GitHellLib (git, currentBranch)
 import ANSIColourLib (blueFG, greenFG)
 import qualified Data.Text as T (justifyRight, pack, unpack)
@@ -38,9 +39,6 @@ gitStatusOrigin :: Shell Text
 gitStatusOrigin = do
   let searchText = "Your branch "
   sed (searchText *> return "") $ grep (prefix searchText) (git "status" ["--long"])
-
-maybeFirstLine :: Shell Text -> IO (Maybe Text)
-maybeFirstLine shellText = fold shellText Fold.head
 
 colourOrEmpty :: (Text -> Text) -> Shell Text -> IO Text
 colourOrEmpty colourFun shellText = do
