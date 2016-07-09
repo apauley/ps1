@@ -31,11 +31,12 @@ getTimeLine = do
 
 getGitLine :: IO Text
 getGitLine = do
-  shortStatus <- maybeFirstLine $ git "status" ["--porcelain"]
+  shortStatus <- maybeFirstLine $ git "status" ["--short"]
+  let modified = fromMaybe "" $ fmap (format ("\n"%s)) shortStatus
   let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
   branch <- colourOrEmpty branchColour currentBranch
   status <- colourOrEmpty upstreamColour gitStatusUpstream
-  return $ format (s%" "%s) branch status
+  return $ format (s%" "%s%s) branch status modified
 
 upstreamColour :: Text -> Text
 upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt

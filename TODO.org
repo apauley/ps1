@@ -2,7 +2,8 @@
 ** , ' .
 * DONE Display local time
 CLOSED: [2016-07-09 Sat 20:25]
-* Show git status output
+* DONE Show git status output
+CLOSED: [2016-07-09 Sat 20:59]
 * Don't show blank lines if not in a repo
 * Single-line prompt
 * Better pwd
