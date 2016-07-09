@@ -24,11 +24,11 @@ main = do
 getGitLine :: IO Text
 getGitLine = do
   branch <- colourOrEmpty greenFG currentBranch
-  status <- colourOrEmpty blueFG gitStatusOrigin
+  status <- colourOrEmpty blueFG gitStatusUpstream
   return $ format (s%" "%s) branch status
 
-gitStatusOrigin :: Shell Text
-gitStatusOrigin = do
+gitStatusUpstream :: Shell Text
+gitStatusUpstream = do
   let searchText = "Your branch "
   sed (searchText *> return "") $ grep (prefix searchText) (git "status" ["--long"])
 
