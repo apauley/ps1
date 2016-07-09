@@ -17,7 +17,8 @@ main = do
   maybeBranch <- currentBranchOrNothing
   cols <- columns
   let rightAlignedDate = T.justifyRight (cols-1) '—' $ format (" "%utc) now
-  let prompt = format (s%"\n"%s%"\n"%fp%"$ ") rightAlignedDate (branch maybeBranch) (basename cwd)
+  maybeStatus <- (maybeFirstLine gitStatusOrigin)
+  let prompt = format (s%"\n"%s%"\n"%fp%"$ ") rightAlignedDate (gitLine maybeBranch maybeStatus) (basename cwd)
   echo prompt
 
 columns :: IO Int
@@ -28,5 +29,16 @@ columns = do
     Just c  -> return $ read $ T.unpack c
     Nothing -> return 80
 
+gitLine :: Maybe Text -> Maybe Text -> Text
+gitLine b st = format (s%" "%s) (branch b) (fromMaybe "" $ fmap blueFG st)
+
 branch :: Maybe Text -> Text
-branch maybeBranch = fromMaybe "" $ fmap (format (s%" ") . greenFG) maybeBranch
+branch maybeBranch = fromMaybe "" $ fmap greenFG maybeBranch
+
+gitStatusOrigin :: Shell Text
+gitStatusOrigin = do
+  let searchText = "Your branch "
+  sed (searchText *> return "") $ grep (prefix searchText) (git "status" ["--long"])
+
+maybeFirstLine :: Shell Text -> IO (Maybe Text)
+maybeFirstLine shellText = fold shellText Fold.head
