@@ -6,20 +6,25 @@ import Turtle
 import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (git, currentBranch)
-import ANSIColourLib (cyanFG, greenFG, yellowFG, lightRedFG)
+import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
 import qualified Data.Text as T (justifyRight, pack, unpack, words)
 import Data.Maybe
 import qualified Control.Foldl as Fold
 
 main :: IO ()
 main = do
-  now <- date
-  cwd <- pwd
-  cols <- terminalColumns
-  let rightAlignedDate = T.justifyRight (cols-1) '—' $ format (" "%utc) now
-  gitLine <- getGitLine
-  let prompt = format (s%"\n"%s%"\n"%fp%"$ ") rightAlignedDate gitLine (basename cwd)
+  cwd      <- pwd
+  timeLine <- getTimeLine
+  gitLine  <- getGitLine
+  let prompt = format (s%"\n"%s%"\n"%fp%"$ ") timeLine gitLine (basename cwd)
   echo prompt
+
+getTimeLine :: IO Text
+getTimeLine = do
+  now  <- date
+  cols <- terminalColumns
+  let time = T.justifyRight (cols-1) '—' $ format (" "%utc) now
+  return $ darkGreyFG time
 
 getGitLine :: IO Text
 getGitLine = do
