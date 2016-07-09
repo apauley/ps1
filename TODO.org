@@ -1,0 +1,10 @@
+* Get rid of punctuation in upstream status
+** , ' .
+* DONE Display local time
+CLOSED: [2016-07-09 Sat 20:25]
+* Show git status output
+* Don't show blank lines if not in a repo
+* Single-line prompt
+* Better pwd
+* Super-user prompt (#)
+* Track other upstream branch (master/develop) if on different branch (rebase needed)
