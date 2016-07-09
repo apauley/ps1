@@ -4,7 +4,8 @@
 CLOSED: [2016-07-09 Sat 20:25]
 * DONE Show git status output
 CLOSED: [2016-07-09 Sat 20:59]
-* Don't show blank lines if not in a repo
+* DONE Don't show blank lines if not in a repo
+CLOSED: [2016-07-09 Sat 21:13]
 * Single-line prompt
 * Better pwd
 * Super-user prompt (#)

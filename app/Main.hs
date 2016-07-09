@@ -7,7 +7,7 @@ import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (git, currentBranch)
 import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
-import qualified Data.Text as T (justifyRight, pack, unpack, words)
+import qualified Data.Text as T (justifyRight, null, pack, unpack, words)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
 import qualified Data.Time.Format as TF
@@ -18,7 +18,7 @@ main = do
   cwd      <- pwd
   timeLine <- getTimeLine
   gitLine  <- getGitLine
-  let prompt = format (s%"\n"%s%"\n"%fp%"$ ") timeLine gitLine (basename cwd)
+  let prompt = format (s%"\n"%s%fp%"$ ") timeLine gitLine (basename cwd)
   echo prompt
 
 getTimeLine :: IO Text
@@ -36,7 +36,10 @@ getGitLine = do
   let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
   branch <- colourOrEmpty branchColour currentBranch
   status <- colourOrEmpty upstreamColour gitStatusUpstream
-  return $ format (s%" "%s%s) branch status modified
+  let lines = if (T.null branch)
+        then ""
+        else format (s%" "%s%s%"\n") branch status modified
+  return lines
 
 upstreamColour :: Text -> Text
 upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
