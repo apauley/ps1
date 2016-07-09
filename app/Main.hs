@@ -4,7 +4,7 @@ module Main where
 
 import Turtle
 import Prelude hiding (FilePath)
-import HSHLib (maybeFirstLine)
+import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (git, currentBranch)
 import ANSIColourLib (blueFG, greenFG)
 import qualified Data.Text as T (justifyRight, pack, unpack)
@@ -15,19 +15,11 @@ main :: IO ()
 main = do
   now <- date
   cwd <- pwd
-  cols <- columns
+  cols <- terminalColumns
   let rightAlignedDate = T.justifyRight (cols-1) '—' $ format (" "%utc) now
   gitLine <- getGitLine
   let prompt = format (s%"\n"%s%"\n"%fp%"$ ") rightAlignedDate gitLine (basename cwd)
   echo prompt
-
-columns :: IO Int
-columns = do
-  let cols = inproc "/usr/bin/env" ["tput", "cols"] empty
-  maybeCols <- fold cols Fold.head
-  case maybeCols of
-    Just c  -> return $ read $ T.unpack c
-    Nothing -> return 80
 
 getGitLine :: IO Text
 getGitLine = do
