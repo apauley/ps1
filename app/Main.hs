@@ -4,8 +4,8 @@ module Main where
 
 import Turtle
 import Prelude hiding (FilePath)
-import GitHellLib
-import ANSIColourLib
+import GitHellLib (git, currentBranch)
+import ANSIColourLib (blueFG, greenFG)
 import qualified Data.Text as T (justifyRight, pack, unpack)
 import Data.Maybe
 import qualified Control.Foldl as Fold
