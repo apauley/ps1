@@ -2,20 +2,16 @@
 
 A command-line executable that gives you a nice bash prompt
 
-## Building
+## Building and Install
 
+This will compile and copy `ps1` to `~/.local/bin`:
 ```bash
-stack build
+stack install
 ```
 
 ## Usage
 
-Put the `ps1` binary somewhere in your path.
-
-This command will copy it to your `~/bin` directory:
-```bash
-find .stack-work/install -type f -name 'ps1' | xargs -J % cp % ~/bin/
-```
+Ensure that `~/.local/bin` is in your path.
 
 Put this in your `~/.bashrc`:
 
