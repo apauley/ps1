@@ -30,15 +30,9 @@ columns = do
 
 getGitLine :: IO Text
 getGitLine = do
-  branch <- maybeFirstLine currentBranch
-  status <- firstLineOrEmpty gitStatusOrigin
-  return $ gitLine branch status
-
-gitLine :: Maybe Text -> Text -> Text
-gitLine b st = format (s%" "%s) (branch b) (blueFG st)
-
-branch :: Maybe Text -> Text
-branch maybeBranch = fromMaybe "" $ fmap greenFG maybeBranch
+  branch <- colourOrEmpty greenFG currentBranch
+  status <- colourOrEmpty blueFG gitStatusOrigin
+  return $ format (s%" "%s) branch status
 
 gitStatusOrigin :: Shell Text
 gitStatusOrigin = do
@@ -48,5 +42,7 @@ gitStatusOrigin = do
 maybeFirstLine :: Shell Text -> IO (Maybe Text)
 maybeFirstLine shellText = fold shellText Fold.head
 
-firstLineOrEmpty :: Shell Text -> IO Text
-firstLineOrEmpty shellText = fmap (fromMaybe "") $ maybeFirstLine shellText
+colourOrEmpty :: (Text -> Text) -> Shell Text -> IO Text
+colourOrEmpty colourFun shellText = do
+  line <- maybeFirstLine shellText
+  return $ fromMaybe "" $ fmap colourFun line
