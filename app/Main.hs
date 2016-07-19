@@ -5,7 +5,7 @@ module Main where
 import Turtle
 import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
-import GitHellLib (git, currentBranch)
+import GitHellLib (gitDiscardErr, currentBranch)
 import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words)
 import Data.Maybe
@@ -39,7 +39,7 @@ getTimeLine = do
 
 getGitLine :: Bool -> IO Text
 getGitLine multiline = do
-  shortStatus <- maybeFirstLine $ git "status" ["--short"]
+  shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
   let modified = fromMaybe "" $ fmap (format ("\n"%s)) shortStatus
   let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
   branch <- colourOrEmpty branchColour currentBranch
@@ -59,7 +59,7 @@ upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
 gitStatusUpstream :: Shell Text
 gitStatusUpstream = do
   let searchText = "Your branch "
-  let st = sed (searchText *> return "") $ grep (prefix searchText) (git "status" ["--long"])
+  let st = sed (searchText *> return "") $ grep (prefix searchText) (gitDiscardErr "status" ["--long"])
   sed ((choice [",", ".", "'"]) *> return "") st
 
 colourOrEmpty :: (Text -> Text) -> Shell Text -> IO Text
