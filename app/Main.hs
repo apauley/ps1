@@ -5,7 +5,7 @@ module Main where
 import Turtle
 import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
-import GitHellLib (gitDiscardErr, currentBranch)
+import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
 import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words)
 import Data.Maybe
@@ -42,7 +42,7 @@ getGitLine multiline = do
   shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
   let modified = fromMaybe "" $ fmap (format ("\n"%s)) shortStatus
   let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
-  branch <- colourOrEmpty branchColour currentBranch
+  branch <- colourOrEmpty branchColour currentBranchDiscardErr
   status <- colourOrEmpty upstreamColour gitStatusUpstream
   let gitPrompt = if multiline
         then format (s%" "%s%s%"\n") branch status modified
