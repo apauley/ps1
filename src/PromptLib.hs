@@ -22,8 +22,8 @@ getTimeLine = do
   let line = T.justifyRight (cols-1) '—' $ format (" "%s) time
   return $ darkGreyFG line
 
-getGitLine :: Maybe Text -> Bool -> IO Text
-getGitLine trackBranch multiline = do
+getGitLine :: Maybe Text -> IO Text
+getGitLine trackBranch = do
   shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
   let modified = fromMaybe "" $ fmap (format ("\n"%s)) shortStatus
   let branchColour = if (shortStatus == Nothing) then greenFG else brownFG
@@ -32,9 +32,7 @@ getGitLine trackBranch multiline = do
   branch <- colourOrEmpty branchColour $ liftIO branchIO
   status <- colourOrEmpty upstreamColour gitStatusUpstream
   rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
-  let gitPrompt = if multiline
-        then format (s%" "%s%" "%s%s%"\n") branch status rebase modified
-        else format (s%" "%s) branch status
+  let gitPrompt = format (s%" "%s%" "%s%s%"\n") branch status rebase modified
   let lines = if (T.null branch)
         then ""
         else gitPrompt

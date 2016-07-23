@@ -8,16 +8,14 @@ import PromptLib (getTimeLine, getGitLine)
 
 main :: IO ()
 main = do
-  (oneline, trackBranch) <- options "Generates a git-aware shell prompt. export PS1='$(ps1)'" parser
+  trackBranch <- options "Generates a git-aware shell prompt. export PS1='$(ps1)'" parser
 
   cwd      <- pwd
   timeLine <- getTimeLine
-  gitLine  <- getGitLine trackBranch $ not oneline
-  let prompt = if oneline
-        then format (s%" "%fp%"$ ") gitLine (basename cwd)
-        else format (s%"\n"%s%fp%"$ ") timeLine gitLine (basename cwd)
+  gitLine  <- getGitLine trackBranch
+  let prompt = format (s%"\n"%s%fp%"$ ") timeLine gitLine (basename cwd)
   echo prompt
 
-parser :: Parser (Bool, Maybe Text)
-parser = (,) <$> switch "oneline" '1' "Don't generate a multi-line prompt"
-             <*> optional (optText "track-branch" 't' "Track if you're up to date with a branch that you may need to merge back to, eg. origin/master")
+parser :: Parser (Maybe Text)
+parser = optional (optText "track-branch" 't'
+                   "Track if you're up to date with a branch that you may need to merge back to, eg. origin/master")
