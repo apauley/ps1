@@ -13,8 +13,14 @@ stack install
 
 Ensure that `~/.local/bin` is in your path.
 
-Put this in your `~/.bashrc`:
+Have a look at the options:
 
 ```bash
-export PS1='$(ps1)'
+ps1 --help
+```
+
+Put something like this in your `~/.bashrc`:
+
+```bash
+PS1='$(ps1 -t origin/master)\n\[\h\]:\[\w\]$ '
 ```
