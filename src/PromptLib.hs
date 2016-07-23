@@ -61,7 +61,7 @@ rebaseNeeded currentBranch trackBranch = do
   let trackedHash = fromMaybe "" maybeHash
   let localHashes = recentNHashes currentBranch 100
   foundHash <- maybeFirstLine $ grep (text trackedHash) localHashes
-  return $ fromMaybe (redBG $ format ("Diverged from "%s) trackBranch) $ fmap (\_ -> "") foundHash
+  return $ fromMaybe (redBG $ format (s%": diverged") trackBranch) $ fmap (\_ -> "") foundHash
 
 recentNHashes :: Text -> Int -> Shell Text
 recentNHashes branch limit = gitDiscardErr "log" ["-n", repr limit, "--format=%H", branch]
