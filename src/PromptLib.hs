@@ -8,7 +8,7 @@ import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
 import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
-import qualified Data.Text as T (justifyRight, null, pack, unpack, words)
+import qualified Data.Text as T (justifyRight, null, pack, unpack, words, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
 import qualified Data.Time.Format as TF
@@ -27,9 +27,11 @@ getGitLine trackBranch multiline = do
   shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
   let modified = fromMaybe "" $ fmap (format ("\n"%s)) shortStatus
   let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
-  branch <- colourOrEmpty branchColour currentBranchDiscardErr
+  let branchIO = fmap T.strip $ strict currentBranchDiscardErr :: IO Text
+  currentBranch <- branchIO
+  branch <- colourOrEmpty branchColour $ liftIO branchIO
   status <- colourOrEmpty upstreamColour gitStatusUpstream
-  rebase <- fromMaybe (return "") (fmap rebaseNeeded trackBranch) :: IO Text
+  rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
   let gitPrompt = if multiline
         then format (s%" "%s%" "%s%s%"\n") branch status rebase modified
         else format (s%" "%s) branch status
@@ -53,13 +55,13 @@ colourOrEmpty colourFun shellText = do
   line <- maybeFirstLine shellText
   return $ fromMaybe "" $ fmap colourFun line
 
-rebaseNeeded :: Text -> IO Text
-rebaseNeeded trackBranch = do
+rebaseNeeded :: Text -> Text -> IO Text
+rebaseNeeded currentBranch trackBranch = do
   maybeHash <- maybeFirstLine (recentNHashes trackBranch 1) :: IO (Maybe Text)
   let trackedHash = fromMaybe "" maybeHash
-  let localHashes = recentNHashes "master" 100
+  let localHashes = recentNHashes currentBranch 100
   foundHash <- maybeFirstLine $ grep (text trackedHash) localHashes
-  return $ fromMaybe "Needs rebase" $ fmap (\_ -> "Up to date") foundHash
+  return $ fromMaybe (format ("Diverged from "%s) trackBranch) $ fmap (\_ -> format ("Up to date with "%s) trackBranch) foundHash
 
 recentNHashes :: Text -> Int -> Shell Text
 recentNHashes branch limit = gitDiscardErr "log" ["-n", repr limit, "--format=%H", branch]
