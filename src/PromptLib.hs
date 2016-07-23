@@ -7,7 +7,7 @@ import Prelude hiding (FilePath)
 
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
-import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG, redBG)
+import ANSIColourLib (brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
@@ -26,7 +26,7 @@ getGitLine :: Maybe Text -> Bool -> IO Text
 getGitLine trackBranch multiline = do
   shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
   let modified = fromMaybe "" $ fmap (format ("\n"%s)) shortStatus
-  let branchColour = if (shortStatus == Nothing) then greenFG else yellowFG
+  let branchColour = if (shortStatus == Nothing) then greenFG else brownFG
   let branchIO = fmap T.strip $ strict currentBranchDiscardErr :: IO Text
   currentBranch <- branchIO
   branch <- colourOrEmpty branchColour $ liftIO branchIO
