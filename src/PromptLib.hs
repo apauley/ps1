@@ -31,7 +31,7 @@ getGitLine trackBranch = do
   branch <- colourOrEmpty branchColour $ liftIO branchIO
   status <- colourOrEmpty upstreamColour gitStatusUpstream
   rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
-  let gitPrompt = format (s%" "%s%" "%s%"\n") branch status rebase
+  let gitPrompt = format (s%" "%s%" "%s) branch status rebase
   let lines = if (T.null branch)
         then ""
         else gitPrompt
