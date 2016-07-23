@@ -7,7 +7,7 @@ import Prelude hiding (FilePath)
 
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
-import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightRedFG)
+import ANSIColourLib (cyanFG, darkGreyFG, greenFG, yellowFG, lightGreenFG, lightRedFG, redBG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
@@ -61,7 +61,7 @@ rebaseNeeded currentBranch trackBranch = do
   let trackedHash = fromMaybe "" maybeHash
   let localHashes = recentNHashes currentBranch 100
   foundHash <- maybeFirstLine $ grep (text trackedHash) localHashes
-  return $ fromMaybe (format ("Diverged from "%s) trackBranch) $ fmap (\_ -> format ("Up to date with "%s) trackBranch) foundHash
+  return $ fromMaybe (redBG $ format ("Diverged from "%s) trackBranch) $ fmap (\_ -> lightGreenFG $ format ("Up to date with "%s) trackBranch) foundHash
 
 recentNHashes :: Text -> Int -> Shell Text
 recentNHashes branch limit = gitDiscardErr "log" ["-n", repr limit, "--format=%H", branch]
