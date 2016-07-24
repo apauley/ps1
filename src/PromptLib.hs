@@ -16,18 +16,18 @@ import qualified Control.Foldl as Fold
 
 multiLinePrompt :: Maybe Text -> IO ()
 multiLinePrompt trackBranch = do
+  br <- fmap T.strip $ strict currentBranchDiscardErr
+  st <- shortStatus
   timeLine <- getTimeLine
-  currentBranch <- fmap T.strip $ strict currentBranchDiscardErr
-  shortStatus <- strict $ gitDiscardErr "status" ["--short"]
-  gitLine  <- getGitLine currentBranch trackBranch shortStatus
+  gitLine  <- getGitLine br trackBranch st
   let prompt = format (s%"\n"%s) timeLine gitLine
   echo prompt
 
 colouredBranch :: IO Text
 colouredBranch = do
-  currentBranch <- fmap T.strip $ strict currentBranchDiscardErr :: IO Text
-  shortStatus <- strict $ gitDiscardErr "status" ["--short"]
-  return $ colourBranch currentBranch shortStatus
+  br <- fmap T.strip $ strict currentBranchDiscardErr :: IO Text
+  st <- shortStatus
+  return $ colourBranch br st
 
 colourBranch :: Text -> Text -> Text
 colourBranch currentBranch shortStatus = do
@@ -56,6 +56,9 @@ getGitLine currentBranch trackBranch shortStatus = do
 upstreamColour :: Text -> Text
 upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
   where upToDate = elem "up-to-date" $ T.words txt
+
+shortStatus :: IO Text
+shortStatus = strict $ gitDiscardErr "status" ["--short"]
 
 gitStatusUpstream :: Shell Text
 gitStatusUpstream = do
