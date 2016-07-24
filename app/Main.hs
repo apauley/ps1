@@ -8,7 +8,7 @@ import PromptLib (getTimeLine, getGitLine)
 
 main :: IO ()
 main = do
-  trackBranch <- options "Generates a git-aware shell prompt. export PS1='$(ps1)'" parser
+  trackBranch <- options "Git-aware prompt: https://github.com/apauley/ps1#readme" parser
 
   timeLine <- getTimeLine
   gitLine  <- getGitLine trackBranch
@@ -16,5 +16,8 @@ main = do
   echo prompt
 
 parser :: Parser (Maybe Text)
-parser = optional (optText "track-branch" 't'
+parser = subcommand "ml" "Generates a multi-line git-aware shell prompt" mlParser
+
+mlParser :: Parser (Maybe Text)
+mlParser = optional (optText "track-branch" 't'
                    "Track if your commits are directly on top of a branch that you may need to merge back to, eg. origin/master")

@@ -1,8 +1,11 @@
-# A nicer bash prompt
+# A git-aware bash prompt
 
-A command-line executable that gives you a nice bash prompt
+A command-line executable that generates a git-aware bash prompt.
 
-## Building and Install
+The idea is to extract most of the information you frequently need
+to get using `git status`,  `git log` etc. and present it in your prompt.
+
+## Build and Install
 
 This will compile and copy `ps1` to `~/.local/bin`:
 ```bash
@@ -22,5 +25,5 @@ ps1 --help
 Put something like this in your `~/.bashrc`:
 
 ```bash
-PS1='$(ps1 -t origin/master)\n\[\h\]:\[\w\]$ '
+PS1='$(ps1 ml -t origin/master)\n\[\h\]:\[\w\]$ '
 ```
