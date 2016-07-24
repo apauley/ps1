@@ -14,6 +14,13 @@ import qualified Data.Time.LocalTime as Time
 import qualified Data.Time.Format as TF
 import qualified Control.Foldl as Fold
 
+multiLinePrompt :: Maybe Text -> IO ()
+multiLinePrompt trackBranch = do
+  timeLine <- getTimeLine
+  gitLine  <- getGitLine trackBranch
+  let prompt = format (s%"\n"%s) timeLine gitLine
+  echo prompt
+
 getTimeLine :: IO Text
 getTimeLine = do
   now  <- Time.getZonedTime
