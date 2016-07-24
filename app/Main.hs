@@ -17,4 +17,4 @@ main = do
 
 parser :: Parser (Maybe Text)
 parser = optional (optText "track-branch" 't'
-                   "Track if you're up to date with a branch that you may need to merge back to, eg. origin/master")
+                   "Track if your commits are directly on top of a branch that you may need to merge back to, eg. origin/master")
