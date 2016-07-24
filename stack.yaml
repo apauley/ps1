@@ -8,10 +8,10 @@ packages:
 - '.'
 - location:
     git: https://github.com/apauley/git-hell
-    commit: d03cedae57be622c160b07668ea01f7a98e29fda
+    commit: b88be8156131664ba98c89fc8eac2a6bf2d502e7
 - location:
     git: https://github.com/apauley/hsh
-    commit: 9bead9c56fd3bd1c434dc3da623d2e94640d209e
+    commit: fd078161550d24f26e5f4d2f9a53f69d733c803d
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps: []

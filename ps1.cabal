@@ -36,6 +36,7 @@ executable ps1
   build-depends:       base
                      , turtle >= 1.2.8 && < 1.3
                      , ps1
+                     , hsh
   default-language:    Haskell2010
 
 test-suite ps1-test
