@@ -17,17 +17,22 @@ import qualified Control.Foldl as Fold
 multiLinePrompt :: Maybe Text -> IO ()
 multiLinePrompt trackBranch = do
   timeLine <- getTimeLine
-  gitLine  <- getGitLine trackBranch
+  currentBranch <- fmap T.strip $ strict currentBranchDiscardErr
+  shortStatus <- strict $ gitDiscardErr "status" ["--short"]
+  gitLine  <- getGitLine currentBranch trackBranch shortStatus
   let prompt = format (s%"\n"%s) timeLine gitLine
   echo prompt
 
 colouredBranch :: IO Text
 colouredBranch = do
-  shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
-  let branchColour = if (shortStatus == Nothing) then greenFG else brownFG
-  let branchIO = fmap T.strip $ strict currentBranchDiscardErr :: IO Text
-  currentBranch <- branchIO
-  colourOrEmpty branchColour $ liftIO branchIO
+  currentBranch <- fmap T.strip $ strict currentBranchDiscardErr :: IO Text
+  shortStatus <- strict $ gitDiscardErr "status" ["--short"]
+  return $ colourBranch currentBranch shortStatus
+
+colourBranch :: Text -> Text -> Text
+colourBranch currentBranch shortStatus = do
+  let branchColour = if (T.null shortStatus) then greenFG else brownFG
+  colourUnlessNull branchColour currentBranch
 
 getTimeLine :: IO Text
 getTimeLine = do
@@ -37,13 +42,9 @@ getTimeLine = do
   let line = T.justifyRight (cols-1) '—' $ format (" "%s) time
   return $ darkGreyFG line
 
-getGitLine :: Maybe Text -> IO Text
-getGitLine trackBranch = do
-  shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
-  let branchColour = if (shortStatus == Nothing) then greenFG else brownFG
-  let branchIO = fmap T.strip $ strict currentBranchDiscardErr :: IO Text
-  currentBranch <- branchIO
-  branch <- colouredBranch
+getGitLine :: Text -> Maybe Text -> Text -> IO Text
+getGitLine currentBranch trackBranch shortStatus = do
+  let branch = colourBranch currentBranch shortStatus
   status <- colourOrEmpty upstreamColour gitStatusUpstream
   rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
   let gitPrompt = format (s%" "%s%" "%s) branch status rebase
@@ -61,6 +62,9 @@ gitStatusUpstream = do
   let searchText = "Your branch "
   let st = sed (searchText *> return "") $ grep (prefix searchText) (gitDiscardErr "status" ["--long"])
   sed ((choice [",", ".", "'"]) *> return "") st
+
+colourUnlessNull :: (Text -> Text) -> Text -> Text
+colourUnlessNull colourFun txt = if T.null txt then txt else colourFun txt
 
 colourOrEmpty :: (Text -> Text) -> Shell Text -> IO Text
 colourOrEmpty colourFun shellText = do
