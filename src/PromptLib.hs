@@ -21,6 +21,14 @@ multiLinePrompt trackBranch = do
   let prompt = format (s%"\n"%s) timeLine gitLine
   echo prompt
 
+colouredBranch :: IO Text
+colouredBranch = do
+  shortStatus <- maybeFirstLine $ gitDiscardErr "status" ["--short"]
+  let branchColour = if (shortStatus == Nothing) then greenFG else brownFG
+  let branchIO = fmap T.strip $ strict currentBranchDiscardErr :: IO Text
+  currentBranch <- branchIO
+  colourOrEmpty branchColour $ liftIO branchIO
+
 getTimeLine :: IO Text
 getTimeLine = do
   now  <- Time.getZonedTime
@@ -35,7 +43,7 @@ getGitLine trackBranch = do
   let branchColour = if (shortStatus == Nothing) then greenFG else brownFG
   let branchIO = fmap T.strip $ strict currentBranchDiscardErr :: IO Text
   currentBranch <- branchIO
-  branch <- colourOrEmpty branchColour $ liftIO branchIO
+  branch <- colouredBranch
   status <- colourOrEmpty upstreamColour gitStatusUpstream
   rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
   let gitPrompt = format (s%" "%s%" "%s) branch status rebase

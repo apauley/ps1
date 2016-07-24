@@ -4,7 +4,7 @@ module Main where
 
 import Turtle
 import Prelude hiding (FilePath)
-import PromptLib (multiLinePrompt)
+import PromptLib (multiLinePrompt, colouredBranch)
 import HSHLib (noArgs)
 
 data PromptCommand = MultiLine (Maybe Text) | Branch (Maybe Text) deriving (Show)
@@ -14,7 +14,7 @@ main = do
   x <- options "Git-aware prompt: https://github.com/apauley/ps1#readme" parser
   case x of
     MultiLine trackBranch -> multiLinePrompt trackBranch
-    Branch _ -> echo "Not yet..."
+    Branch _ -> colouredBranch >>= echo
 
 parser :: Parser PromptCommand
 parser = fmap MultiLine (subcommand "ml" "Generates a multi-line git-aware shell prompt" mlParser)
