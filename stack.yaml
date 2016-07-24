@@ -8,7 +8,7 @@ packages:
 - '.'
 - location:
     git: https://github.com/apauley/git-hell
-    commit: b88be8156131664ba98c89fc8eac2a6bf2d502e7
+    commit: 2f42670f996b4d6b78339a2c44ba44f8f7867012
 - location:
     git: https://github.com/apauley/hsh
     commit: fd078161550d24f26e5f4d2f9a53f69d733c803d

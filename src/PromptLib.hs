@@ -16,7 +16,7 @@ import qualified Control.Foldl as Fold
 
 multiLinePrompt :: Maybe Text -> IO ()
 multiLinePrompt trackBranch = do
-  br <- fmap T.strip $ strict currentBranchDiscardErr
+  br <- currentBranchDiscardErr
   st <- shortStatus
   timeLine <- getTimeLine
   gitLine  <- getGitLine br trackBranch st
@@ -25,7 +25,7 @@ multiLinePrompt trackBranch = do
 
 colouredBranch :: IO Text
 colouredBranch = do
-  br <- fmap T.strip $ strict currentBranchDiscardErr :: IO Text
+  br <- currentBranchDiscardErr
   st <- shortStatus
   return $ colourBranch br st
 
