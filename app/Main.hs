@@ -13,7 +13,7 @@ main :: IO ()
 main = do
   x <- options "Git-aware prompt: https://github.com/apauley/ps1#readme" parser
   case x of
-    MultiLine trackBranch -> multiLinePrompt trackBranch
+    MultiLine trackBranch -> multiLinePrompt trackBranch >>= echo
     Branch _ -> colouredBranch >>= echo
 
 parser :: Parser PromptCommand

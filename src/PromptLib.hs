@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module PromptLib where
+module PromptLib (multiLinePrompt
+                 ,colouredBranch) where
 
 import Turtle
 import Prelude hiding (FilePath)
@@ -14,14 +15,13 @@ import qualified Data.Time.LocalTime as Time
 import qualified Data.Time.Format as TF
 import qualified Control.Foldl as Fold
 
-multiLinePrompt :: Maybe Text -> IO ()
+multiLinePrompt :: Maybe Text -> IO Text
 multiLinePrompt trackBranch = do
   br <- currentBranchDiscardErr
   st <- shortStatus
   timeLine <- getTimeLine
   gitLine  <- getGitLine br trackBranch st
-  let prompt = format (s%"\n"%s) timeLine gitLine
-  echo prompt
+  return $ format (s%"\n"%s) timeLine gitLine
 
 colouredBranch :: IO Text
 colouredBranch = do
