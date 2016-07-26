@@ -21,7 +21,9 @@ multiLinePrompt trackBranch = do
   st <- shortStatus
   timeLine <- getTimeLine
   gitLines <- getGitLines br trackBranch st
-  return $ format (s%"\n"%s) timeLine gitLines
+
+  hw <- hostPwd
+  return $ timeLine <> "\n" <> gitLines <> hw <> "$ "
 
 singleLinePrompt :: Maybe Text -> IO Text
 singleLinePrompt trackBranch = do
@@ -39,15 +41,6 @@ singleLinePrompt trackBranch = do
 
   hw <- hostPwd
   return $ gp <> hw <> "$ "
-
-hostPwd :: IO Text
-hostPwd = do
-  h <- hostname
-  w <- pwd
-  let host = colourUnlessNull lightPurpleFG h
-  let cwd  = colourUnlessNull lightBlueFG   $ format fp w
-  return $ host <> ":" <> cwd
-
 
 colourBranch :: Text -> Text -> Text
 colourBranch currentBranch shortStatus = do
@@ -104,6 +97,14 @@ rebaseNeeded currentBranch trackBranch = do
   let localHashes = recentNHashes currentBranch 100
   foundHash <- maybeFirstLine $ grep (text trackedHash) localHashes
   return $ fromMaybe (redBG $ format ("Diverged from "%s) trackBranch) $ fmap (\_ -> "") foundHash
+
+hostPwd :: IO Text
+hostPwd = do
+  h <- hostname
+  w <- pwd
+  let host = colourUnlessNull lightPurpleFG h
+  let cwd  = colourUnlessNull lightBlueFG   $ format fp w
+  return $ host <> ":" <> cwd
 
 recentNHashes :: Text -> Int -> Shell Text
 recentNHashes branch limit = gitDiscardErr "log" ["-n", repr limit, "--format=%H", branch]
