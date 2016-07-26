@@ -29,6 +29,3 @@ columns = do
 
 branch :: Maybe Text -> Text
 branch maybeBranch = fromMaybe "" $ fmap (format (s%" ")) maybeBranch
-
-showText :: Show a => a -> Text
-showText s = T.pack $ show s
