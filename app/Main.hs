@@ -6,6 +6,7 @@ import Turtle
 import Prelude hiding (FilePath)
 import GitHellLib
 import qualified Data.Text as T (pack, unpack, justifyRight)
+import Data.Maybe
 import qualified Control.Foldl as Fold
 
 main :: IO ()
@@ -27,9 +28,7 @@ columns = do
     Nothing -> return 80
 
 branch :: Maybe Text -> Text
-branch maybeBranch = case maybeBranch of
-  Just b  -> format (s%" ") b
-  Nothing -> ""
+branch maybeBranch = fromMaybe "" $ fmap (format (s%" ")) maybeBranch
 
 showText :: Show a => a -> Text
 showText s = T.pack $ show s
