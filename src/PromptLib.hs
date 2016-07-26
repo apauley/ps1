@@ -23,7 +23,7 @@ multiLinePrompt trackBranch = do
   gitLines <- getGitLines br trackBranch st
 
   hw <- hostPwd
-  return $ timeLine <> "\n" <> gitLines <> hw <> "$ "
+  return $ timeLine <> gitLines <> hw <> "$ "
 
 singleLinePrompt :: Maybe Text -> IO Text
 singleLinePrompt trackBranch = do
@@ -53,20 +53,20 @@ getTimeLine = do
   cols <- terminalColumns
   let time = T.pack $ TF.formatTime TF.defaultTimeLocale "%a %b %d, %Y %H:%M:%S" now
   let line = T.justifyRight (cols-1) '-' $ format (" "%s) time
-  return $ darkGreyFG line
+  return $ (darkGreyFG line) <> "\n"
 
 getGitLines :: Text -> Maybe Text -> Text -> IO Text
 getGitLines currentBranch trackBranch shortStatus = do
   let branch = colourBranch currentBranch shortStatus
+
   status <- colourOrEmpty upstreamColour gitStatusUpstream
   rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
-  let gitPrompt = format (s%" "%s%" "%s) branch status rebase
-  let gp = if (T.null branch)
-        then ""
-        else gitPrompt
+  let gitPrompt = T.strip $ format (s%" "%s%" "%s) branch status rebase
+  let gp = if T.null gitPrompt then "" else T.snoc gitPrompt '\n'
+
   let lines = if (T.null shortStatus)
         then gp
-        else format (s%"\n"%s) gp shortStatus
+        else gp <> shortStatus <> "\n"
   return lines
 
 upstreamColour :: Text -> Text
@@ -74,7 +74,7 @@ upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
   where upToDate = elem "up-to-date" $ T.words txt
 
 shortStatus :: IO Text
-shortStatus = strict $ gitDiscardErr "status" ["--short"]
+shortStatus = fmap T.strip $ strict $ gitDiscardErr "status" ["--short"]
 
 gitStatusUpstream :: Shell Text
 gitStatusUpstream = do
