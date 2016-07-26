@@ -101,10 +101,18 @@ rebaseNeeded currentBranch trackBranch = do
 hostPwd :: IO Text
 hostPwd = do
   h <- hostname
-  w <- pwd
+  w <- promptPwd
   let host = colourUnlessNull lightPurpleFG h
-  let cwd  = colourUnlessNull lightBlueFG   $ format fp w
+  let cwd  = colourUnlessNull lightBlueFG   w
   return $ host <> ":" <> cwd
+
+promptPwd :: IO Text
+promptPwd = do
+  h <- home
+  w <- pwd
+
+  let cwd = sed (text (format fp h) *> return "~") (return (format fp w)) :: Shell Text
+  fmap T.strip $ strict cwd
 
 recentNHashes :: Text -> Int -> Shell Text
 recentNHashes branch limit = gitDiscardErr "log" ["-n", repr limit, "--format=%H", branch]
