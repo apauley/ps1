@@ -8,7 +8,7 @@ import Prelude hiding (FilePath)
 
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
-import ANSIColourLib (brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG)
+import ANSIColourLib (brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words, snoc, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
@@ -29,15 +29,25 @@ singleLinePrompt trackBranch = do
   st <- shortStatus
 
   status <- colourOrEmpty upstreamColour gitStatusUpstream
-  rebase <- fromMaybe (return "") (fmap (rebaseNeeded br) trackBranch) :: IO Text
+  rebase <- fromMaybe (return "") (fmap (rebaseNeeded br) trackBranch)
+
   let branch = if T.null br
         then ""
         else format (s%" ") $ colourBranch br st
   let gitPrompt = T.strip $ branch <> status <> rebase
+  let gp = if T.null gitPrompt then "" else T.snoc gitPrompt ' '
 
-  if T.null gitPrompt
-    then return ""
-    else return $ T.snoc gitPrompt ' '
+  hw <- hostPwd
+  return $ gp <> hw <> "$ "
+
+hostPwd :: IO Text
+hostPwd = do
+  h <- hostname
+  w <- pwd
+  let host = colourUnlessNull lightPurpleFG h
+  let cwd  = colourUnlessNull lightBlueFG   $ format fp w
+  return $ host <> ":" <> cwd
+
 
 colourBranch :: Text -> Text -> Text
 colourBranch currentBranch shortStatus = do
