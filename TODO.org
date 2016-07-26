@@ -1,15 +1,5 @@
-* DONE Get rid of punctuation in upstream status
-CLOSED: [2016-07-09 Sat 21:29]
-** , ' .
-* DONE Display local time
-CLOSED: [2016-07-09 Sat 20:25]
-* DONE Show git status output
-CLOSED: [2016-07-09 Sat 20:59]
-* DONE Don't show blank lines if not in a repo
-CLOSED: [2016-07-09 Sat 21:13]
-* DONE Single-line prompt
-CLOSED: [2016-07-09 Sat 22:15]
-* Add --no-colour option
-* Better pwd
-* Super-user prompt (#)
-* Track other upstream branch (master/develop) if on different branch (rebase needed)
+* Configure a possibly different trackBranch per repository
+* Show how many commits you are ahead of trackBranch
+* Don't show the trackBranch output if the upstream branch and the trackBranch are the same
+** e.g. you are on master with an upstream of origin/master, but the trackBranch is also origin/master
+* Shorten the single-line prompt
