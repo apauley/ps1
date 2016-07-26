@@ -25,11 +25,7 @@ ps1 --help
 Put something like this in your `~/.bashrc`:
 
 ```bash
-PURPLE="\[\033[01;35m\]"
-BLUE="\[\033[01;34m\]"
-RESET="\[\033[00m\]"
-GITPS1='$(ps1 ml --track-branch=origin/master)'
-PS1="${GITPS1}\n${PURPLE}\h${RESET}:${BLUE}\w${RESET}$ "
+PS1='$(ps1 ml --track-branch=origin/master)'
 ```
 
 Change `ml` to `sl` for a single-line prompt
