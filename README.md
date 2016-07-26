@@ -22,8 +22,6 @@ Have a look at the options:
 ps1 --help
 ```
 
-### The default Multi-line Prompt
-
 Put something like this in your `~/.bashrc`:
 
 ```bash
@@ -34,15 +32,4 @@ GITPS1='$(ps1 ml --track-branch=origin/master)'
 PS1="${GITPS1}\n${PURPLE}\h${RESET}:${BLUE}\w${RESET}$ "
 ```
 
-### Build your own prompt
-
-This creates a simple single-line prompt:
-
-```bash
-PURPLE="\[\033[01;35m\]"
-BLUE="\[\033[01;34m\]"
-RESET="\[\033[00m\]"
-GITPS1='$(ps1 br)'
-PS1="${GITPS1} ${PURPLE}\h${RESET}:${BLUE}\w${RESET}$ "
-```
-
+Change `ml` to `sl` for a single-line prompt

@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module PromptLib (multiLinePrompt
-                 ,colouredBranch) where
+                 ,singleLinePrompt) where
 
 import Turtle
 import Prelude hiding (FilePath)
@@ -23,8 +23,8 @@ multiLinePrompt trackBranch = do
   gitLines <- getGitLines br trackBranch st
   return $ format (s%"\n"%s) timeLine gitLines
 
-colouredBranch :: IO Text
-colouredBranch = do
+singleLinePrompt :: Maybe Text -> IO Text
+singleLinePrompt trackBranch = do
   br <- currentBranchDiscardErr
   st <- shortStatus
   return $ colourBranch br st
