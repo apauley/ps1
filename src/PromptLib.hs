@@ -27,7 +27,11 @@ singleLinePrompt :: Maybe Text -> IO Text
 singleLinePrompt trackBranch = do
   br <- currentBranchDiscardErr
   st <- shortStatus
-  return $ colourBranch br st
+  status <- colourOrEmpty upstreamColour gitStatusUpstream
+  rebase <- fromMaybe (return "") (fmap (rebaseNeeded br) trackBranch) :: IO Text
+  let branch = colourBranch br st
+  let gitPrompt = format (s%" "%s%" "%s) branch status rebase
+  return gitPrompt
 
 colourBranch :: Text -> Text -> Text
 colourBranch currentBranch shortStatus = do
