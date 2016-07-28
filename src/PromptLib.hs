@@ -8,7 +8,7 @@ import Prelude hiding (FilePath)
 
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
-import ANSIColourLib (ColourFun, brownFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
+import ANSIColourLib (ColourFun, brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words, snoc, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
@@ -44,7 +44,7 @@ branchColourShort :: Text -> Text -> Bool -> ColourFun
 branchColourShort shortStatus upstreamStatus diverged = if diverged
   then redBG
   else if (T.null shortStatus)
-  then upstreamColour upstreamStatus
+  then upstreamColour upstreamStatus greenFG lightRedFG
   else brownFG
 
 colourBranch :: Text -> Text -> Text
@@ -75,10 +75,10 @@ getGitLines currentBranch trackBranch shortStatus = do
   return lines
 
 upstreamColourSelf :: ColourFun
-upstreamColourSelf txt = upstreamColour txt txt
+upstreamColourSelf st = upstreamColour st cyanFG lightRedFG st
 
-upstreamColour :: Text -> ColourFun
-upstreamColour st = if upToDate then greenFG else lightRedFG
+upstreamColour :: Text -> ColourFun -> ColourFun -> ColourFun
+upstreamColour st good bad = if upToDate then good else bad
   where upToDate = elem "up-to-date" $ T.words st
 
 shortStatus :: IO Text
