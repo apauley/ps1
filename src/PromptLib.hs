@@ -8,7 +8,7 @@ import Prelude hiding (FilePath)
 
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
-import ANSIColourLib (ColourFun, brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
+import ANSIColourLib (ColourFun, brownFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words, snoc, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
@@ -78,7 +78,7 @@ upstreamColourSelf :: ColourFun
 upstreamColourSelf txt = upstreamColour txt txt
 
 upstreamColour :: Text -> ColourFun
-upstreamColour st = if upToDate then cyanFG else lightRedFG
+upstreamColour st = if upToDate then greenFG else lightRedFG
   where upToDate = elem "up-to-date" $ T.words st
 
 shortStatus :: IO Text
