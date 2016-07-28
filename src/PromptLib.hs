@@ -8,7 +8,7 @@ import Prelude hiding (FilePath)
 
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
-import ANSIColourLib (brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
+import ANSIColourLib (ColourFun, brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
 import qualified Data.Text as T (justifyRight, null, pack, unpack, words, snoc, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
@@ -31,7 +31,7 @@ singleLinePrompt trackBranch = do
   st <- shortStatus
 
   status <- colourOrEmpty upstreamColour gitStatusUpstream
-  rebase <- fromMaybe (return "") (fmap (rebaseNeeded br) trackBranch)
+  rebase <- fromMaybe (return "") (fmap (trackBranchText br) trackBranch)
 
   let branch = if T.null br
         then ""
@@ -60,7 +60,7 @@ getGitLines currentBranch trackBranch shortStatus = do
   let branch = colourBranch currentBranch shortStatus
 
   status <- colourOrEmpty upstreamColour gitStatusUpstream
-  rebase <- fromMaybe (return "") (fmap (rebaseNeeded currentBranch) trackBranch) :: IO Text
+  rebase <- fromMaybe (return "") (fmap (trackBranchText currentBranch) trackBranch) :: IO Text
   let gitPrompt = T.strip $ format (s%" "%s%" "%s) branch status rebase
   let gp = if T.null gitPrompt then "" else T.snoc gitPrompt '\n'
 
@@ -90,8 +90,8 @@ colourOrEmpty colourFun shellText = do
   line <- maybeFirstLine shellText
   return $ fromMaybe "" $ fmap colourFun line
 
-rebaseNeeded :: Text -> Text -> IO Text
-rebaseNeeded currentBranch trackBranch = do
+trackBranchText :: Text -> Text -> IO Text
+trackBranchText currentBranch trackBranch = do
   maybeHash <- maybeFirstLine (recentNHashes trackBranch 1) :: IO (Maybe Text)
   let trackedHash = fromMaybe "" maybeHash
   let localHashes = recentNHashes currentBranch 100

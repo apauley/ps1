@@ -4,14 +4,15 @@ module ANSIColourLib where
 
 import Turtle
 
+type ColourFun = Text -> Text
 type ColourCode = Text
 
 -- \x01 corresponds to '\[' in Bash
 -- \x02 corresponds to '\]' in Bash
 -- http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 -- https://superuser.com/questions/301353/escape-non-printing-characters-in-a-function-for-a-bash-prompt/301355
-colourText :: ColourCode -> Text -> Text
-colourText colour t = format ("\x01\x1b["%s%"m\x02"%s%"\x01\x1b[0m\x02") colour t
+colourText :: ColourCode -> ColourFun
+colourText colourCode = format ("\x01\x1b["%s%"m\x02"%s%"\x01\x1b[0m\x02") colourCode
 
 blackFG       = colourText codeBlackFG
 darkGreyFG    = colourText codeDarkGreyFG
