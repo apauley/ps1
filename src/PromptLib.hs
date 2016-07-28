@@ -30,17 +30,22 @@ singleLinePrompt trackBranch = do
   br <- currentBranchDiscardErr
   st <- shortStatus
 
-  status <- colourOrEmpty upstreamColour gitStatusUpstream
-  rebase <- fromMaybe (return "") (fmap (trackBranchText br) trackBranch)
+  status   <- strict gitStatusUpstream
+  diverged <- fromMaybe (return False) (fmap (trackBranchDiverged br) trackBranch)
 
-  let branch = if T.null br
-        then ""
-        else format (s%" ") $ colourBranch br st
-  let gitPrompt = T.strip $ branch <> status <> rebase
-  let gp = if T.null gitPrompt then "" else T.snoc gitPrompt ' '
+  let colour = branchColourShort st status diverged
+  let branch = colourUnlessNull colour $ T.strip br
+  let gitPrompt = if T.null br then "" else T.snoc branch ' '
 
   hw <- hostPwd
-  return $ gp <> hw <> "$ "
+  return $ gitPrompt <> hw <> "$ "
+
+branchColourShort :: Text -> Text -> Bool -> ColourFun
+branchColourShort shortStatus upstreamStatus diverged = if diverged
+  then redBG
+  else if (T.null shortStatus)
+  then upstreamColour upstreamStatus
+  else brownFG
 
 colourBranch :: Text -> Text -> Text
 colourBranch currentBranch shortStatus = do
@@ -59,7 +64,7 @@ getGitLines :: Text -> Maybe Text -> Text -> IO Text
 getGitLines currentBranch trackBranch shortStatus = do
   let branch = colourBranch currentBranch shortStatus
 
-  status <- colourOrEmpty upstreamColour gitStatusUpstream
+  status <- colourOrEmpty upstreamColourSelf gitStatusUpstream
   rebase <- fromMaybe (return "") (fmap (trackBranchText currentBranch) trackBranch) :: IO Text
   let gitPrompt = T.strip $ format (s%" "%s%" "%s) branch status rebase
   let gp = if T.null gitPrompt then "" else T.snoc gitPrompt '\n'
@@ -69,9 +74,12 @@ getGitLines currentBranch trackBranch shortStatus = do
         else gp <> shortStatus <> "\n"
   return lines
 
-upstreamColour :: Text -> Text
-upstreamColour txt = if upToDate then cyanFG txt else lightRedFG txt
-  where upToDate = elem "up-to-date" $ T.words txt
+upstreamColourSelf :: ColourFun
+upstreamColourSelf txt = upstreamColour txt txt
+
+upstreamColour :: Text -> ColourFun
+upstreamColour st = if upToDate then cyanFG else lightRedFG
+  where upToDate = elem "up-to-date" $ T.words st
 
 shortStatus :: IO Text
 shortStatus = fmap T.strip $ strict $ gitDiscardErr "status" ["--short"]
@@ -92,11 +100,19 @@ colourOrEmpty colourFun shellText = do
 
 trackBranchText :: Text -> Text -> IO Text
 trackBranchText currentBranch trackBranch = do
+  diverged <- trackBranchDiverged currentBranch trackBranch
+  let txt = if diverged
+        then format ("Diverged from "%s) trackBranch
+        else ""
+  return $ colourUnlessNull redBG txt
+
+trackBranchDiverged :: Text -> Text -> IO Bool
+trackBranchDiverged currentBranch trackBranch = do
   maybeHash <- maybeFirstLine (recentNHashes trackBranch 1) :: IO (Maybe Text)
   let trackedHash = fromMaybe "" maybeHash
   let localHashes = recentNHashes currentBranch 100
   foundHash <- maybeFirstLine $ grep (text trackedHash) localHashes
-  return $ fromMaybe (redBG $ format ("Diverged from "%s) trackBranch) $ fmap (\_ -> "") foundHash
+  return $ isNothing foundHash
 
 hostPwd :: IO Text
 hostPwd = do
