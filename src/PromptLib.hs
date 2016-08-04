@@ -125,9 +125,9 @@ hostPwd = do
 promptPwd :: IO Text
 promptPwd = do
   h <- home
-  w <- pwd
+  let w = inshell "pwd" empty
 
-  let cwd = sed (text (format fp h) *> return "~") (return (format fp w)) :: Shell Text
+  let cwd = sed (text (format fp h) *> return "~") w
   fmap T.strip $ strict cwd
 
 recentNHashes :: Text -> Int -> Shell Text
