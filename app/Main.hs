@@ -10,11 +10,8 @@ main :: IO ()
 main = do
   now <- date
   cwd <- pwd
-  echo $ showText now
-  echo $ showFilePath $ basename cwd
+  let prompt = format (s%"\n"%fp%"$ ") (showText now) (basename cwd)
+  echo prompt
 
 showText :: Show a => a -> Text
 showText s = pack $ show s
-
-showFilePath :: FilePath -> Text
-showFilePath path = (format fp) path
