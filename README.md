@@ -25,7 +25,18 @@ ps1 --help
 Put something like this in your `~/.bashrc`:
 
 ```bash
-PS1='$(ps1 ml --track-branch=origin/master)'
+PS1='$(ps1 ml)'
 ```
 
 Change `ml` to `sl` for a single-line prompt
+
+You can add a file called `ps1.cfg` to any of your git repositories.
+This allows you to specify another upstream branch to track if needed.
+
+Example contents:
+
+```
+# https://github.com/apauley/ps1#readme
+# This tells the prompt to display `Diverged from origin/develop` if needed
+track-branch = origin/develop
+```
