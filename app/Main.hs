@@ -3,6 +3,9 @@
 module Main where
 
 import Turtle
+import Data.Text (pack)
 
 main :: IO ()
-main = echo "hi"
+main = do
+  now <- date
+  echo $ pack $ show now
