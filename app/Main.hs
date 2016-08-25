@@ -17,9 +17,5 @@ main = do
     OneLine   trackBranch -> singleLinePrompt >>= echo
 
 parser :: Parser PromptCommand
-parser = fmap MultiLine (subcommand "ml" "Generates a multi-line git-aware shell prompt"  trackParser)
-     <|> fmap OneLine    (subcommand "sl" "Generates a single-line git-aware shell prompt" trackParser)
-
-trackParser :: Parser (Maybe Text)
-trackParser = optional (optText "track-branch" 't'
-                   "Track if your commits are directly on top of a branch that you may need to merge back to, eg. origin/master")
+parser = fmap MultiLine (subcommand "ml" "Generates a multi-line git-aware shell prompt"  noArgs)
+     <|> fmap OneLine   (subcommand "sl" "Generates a single-line git-aware shell prompt" noArgs)
