@@ -23,6 +23,10 @@ executable ps1
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+
+  if !os(osx)
+    ghc-options:       -static -optc-static -optl-static
+
   build-depends:       base
                      , turtle >= 1.2.7 && < 1.3
                      , text
