@@ -1,6 +1,8 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
-import Lib
+import Turtle
 
 main :: IO ()
-main = someFunc
+main = echo "hi"
