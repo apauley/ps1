@@ -13,8 +13,8 @@ main :: IO ()
 main = do
   x <- options "Git-aware prompt: https://github.com/apauley/ps1#readme" parser
   case x of
-    MultiLine trackBranch -> multiLinePrompt  trackBranch >>= echo
-    OneLine   trackBranch -> singleLinePrompt trackBranch >>= echo
+    MultiLine trackBranch -> multiLinePrompt  >>= echo
+    OneLine   trackBranch -> singleLinePrompt >>= echo
 
 parser :: Parser PromptCommand
 parser = fmap MultiLine (subcommand "ml" "Generates a multi-line git-aware shell prompt"  trackParser)

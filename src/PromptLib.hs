@@ -15,8 +15,8 @@ import qualified Data.Time.LocalTime as Time
 import qualified Data.Time.Format as TF
 import qualified Control.Foldl as Fold
 
-multiLinePrompt :: Maybe Text -> IO Text
-multiLinePrompt trackBranch' = do
+multiLinePrompt :: IO Text
+multiLinePrompt = do
   trackBranch <- readTrackBranch
   br <- currentBranchDiscardErr
   st <- shortStatus
@@ -26,8 +26,8 @@ multiLinePrompt trackBranch' = do
   hw <- hostPwd
   return $ timeLine <> gitLines <> hw <> "$ "
 
-singleLinePrompt :: Maybe Text -> IO Text
-singleLinePrompt trackBranch' = do
+singleLinePrompt :: IO Text
+singleLinePrompt = do
   trackBranch <- readTrackBranch
   br <- currentBranchDiscardErr
   st <- shortStatus
