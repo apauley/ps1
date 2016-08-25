@@ -11,7 +11,7 @@ main = do
   now <- date
   cwd <- pwd
   echo $ showText now
-  echo $ showFilePath cwd
+  echo $ showFilePath $ basename cwd
 
 showText :: Show a => a -> Text
 showText s = pack $ show s
