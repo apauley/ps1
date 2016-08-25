@@ -1,5 +1,3 @@
-* Configure a possibly different trackBranch per repository
 * Show how many commits you are ahead of trackBranch
 * Don't show the trackBranch output if the upstream branch and the trackBranch are the same
 ** e.g. you are on master with an upstream of origin/master, but the trackBranch is also origin/master
-* Shorten the single-line prompt
