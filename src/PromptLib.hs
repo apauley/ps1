@@ -9,14 +9,15 @@ import Prelude hiding (FilePath)
 import HSHLib (maybeFirstLine, terminalColumns)
 import GitHellLib (gitDiscardErr, currentBranchDiscardErr)
 import ANSIColourLib (ColourFun, brownFG, cyanFG, darkGreyFG, greenFG, lightRedFG, redBG, lightPurpleFG, lightBlueFG)
-import qualified Data.Text as T (justifyRight, null, pack, unpack, words, snoc, strip)
+import qualified Data.Text as T (justifyRight, null, pack, unpack, words, snoc, splitOn, strip)
 import Data.Maybe
 import qualified Data.Time.LocalTime as Time
 import qualified Data.Time.Format as TF
 import qualified Control.Foldl as Fold
 
 multiLinePrompt :: Maybe Text -> IO Text
-multiLinePrompt trackBranch = do
+multiLinePrompt trackBranch' = do
+  trackBranch <- readTrackBranch
   br <- currentBranchDiscardErr
   st <- shortStatus
   timeLine <- getTimeLine
@@ -26,7 +27,8 @@ multiLinePrompt trackBranch = do
   return $ timeLine <> gitLines <> hw <> "$ "
 
 singleLinePrompt :: Maybe Text -> IO Text
-singleLinePrompt trackBranch = do
+singleLinePrompt trackBranch' = do
+  trackBranch <- readTrackBranch
   br <- currentBranchDiscardErr
   st <- shortStatus
 
@@ -39,6 +41,22 @@ singleLinePrompt trackBranch = do
 
   hw <- hostPwd
   return $ gitPrompt <> hw <> "$ "
+
+readTrackBranch :: IO (Maybe Text)
+readTrackBranch = do
+  let cfgFile = "ps1.cfg"
+  cfgExists <- testfile cfgFile
+  if cfgExists
+    then parseConfig $ input cfgFile
+    else return Nothing
+
+parseConfig :: Shell Text -> IO (Maybe Text)
+parseConfig shellTxt = do
+  txt <- strict $ grep (has "track-branch") shellTxt
+  let branchSplit = T.splitOn "=" txt
+  case branchSplit of
+    (_:branch:_) -> return $ Just (T.strip branch)
+    _ -> return Nothing
 
 branchColourShort :: Text -> Text -> Bool -> ColourFun
 branchColourShort shortStatus upstreamStatus diverged = if diverged
