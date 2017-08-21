@@ -40,3 +40,12 @@ Example contents:
 # This tells the prompt to display `Diverged from origin/develop` if needed
 track-branch = origin/develop
 ```
+
+## Build the Executable using Stack within Docker
+
+```bash
+$ docker run -v ~/.stack:/root/.stack -v ~/.local/bin:/root/.local/bin -v ${PWD}:/ps1 -it --rm haskell:8.0.1 /bin/bash
+$ cd /ps1
+$ stack config set system-ghc --global true
+$ stack install --allow-different-user
+```

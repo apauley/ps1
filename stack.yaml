@@ -1,17 +1,17 @@
 # For more information, see: https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-6.7
+resolver: lts-7.24
 
 # Local packages, usually specified by relative directory name
 packages:
 - '.'
 - location:
     git: https://github.com/apauley/git-hell
-    commit: ad337c3e8875ee4f0e989c872cfb307c2092f1f0
+    commit: aed02404ffa09ea289be67ced00f0612752c04ec
 - location:
     git: https://github.com/apauley/hsh
-    commit: 2f680c07d99ecfbefbcca0eb0e85866370acdcd2
+    commit: cec04060167106973cf0a5c56948c6fd311544f4
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps: []
