@@ -1,7 +1,7 @@
 # For more information, see: https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-9.21
+resolver: lts-11.17
 
 # Local packages, usually specified by relative directory name
 packages:
@@ -10,9 +10,9 @@ packages:
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
 - git: https://github.com/apauley/git-hell
-  commit: 3c33d89604b963dc5909da937c14460895d4deb6
+  commit: cf6016f274a510724b556f664c0ef2c2d297f248
 - git: https://github.com/apauley/hsh
-  commit: 6437488e4293a1d7116137b04e9fcef25c00325b
+  commit: 75068acc437f12801638230c94e3cd896761bf7c
 
 # Override default flag values for local packages and extra-deps
 flags: {}
