@@ -18,7 +18,7 @@ library
   exposed-modules:     PromptLib
                      , ANSIColourLib
   build-depends:       base >= 4.7 && < 5
-                     , turtle >= 1.2.8 && < 1.3
+                     , turtle
                      , text >= 1.2.2
                      , foldl >= 1.2.1
                      , time
@@ -35,7 +35,8 @@ executable ps1
     ghc-options:       -static -optc-static -optl-static
 
   build-depends:       base
-                     , turtle >= 1.2.8 && < 1.3
+                     , turtle
+                     , text
                      , ps1
                      , hsh
   default-language:    Haskell2010

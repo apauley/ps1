@@ -18,7 +18,7 @@ import qualified Control.Foldl as Fold
 multiLinePrompt :: IO Text
 multiLinePrompt = do
   trackBranch <- readTrackBranch
-  br <- currentBranchDiscardErr
+  br <- fmap lineToText currentBranchDiscardErr
   st <- shortStatus
   timeLine <- getTimeLine
   gitLines <- getGitLines br trackBranch st
@@ -29,7 +29,7 @@ multiLinePrompt = do
 singleLinePrompt :: IO Text
 singleLinePrompt = do
   trackBranch <- readTrackBranch
-  br <- currentBranchDiscardErr
+  br <- fmap lineToText currentBranchDiscardErr
   st <- shortStatus
 
   status   <- strict gitStatusUpstream
@@ -50,7 +50,7 @@ readTrackBranch = do
     then parseConfig $ input cfgFile
     else return Nothing
 
-parseConfig :: Shell Text -> IO (Maybe Text)
+parseConfig :: Shell Line -> IO (Maybe Text)
 parseConfig shellTxt = do
   txt <- strict $ grep (has "track-branch") shellTxt
   let branchSplit = T.splitOn "=" txt
@@ -102,7 +102,7 @@ upstreamColour st good bad = if upToDate then good else bad
 shortStatus :: IO Text
 shortStatus = fmap T.strip $ strict $ gitDiscardErr "status" ["--short"]
 
-gitStatusUpstream :: Shell Text
+gitStatusUpstream :: Shell Line
 gitStatusUpstream = do
   let searchText = "Your branch "
   let st = sed (searchText *> return "") $ grep (prefix searchText) (gitDiscardErr "status" ["--long"])
@@ -111,10 +111,10 @@ gitStatusUpstream = do
 colourUnlessNull :: (Text -> Text) -> Text -> Text
 colourUnlessNull colourFun txt = if T.null txt then txt else colourFun txt
 
-colourOrEmpty :: (Text -> Text) -> Shell Text -> IO Text
-colourOrEmpty colourFun shellText = do
-  line <- maybeFirstLine shellText
-  return $ fromMaybe "" $ fmap colourFun line
+colourOrEmpty :: (Text -> Text) -> Shell Line -> IO Text
+colourOrEmpty colourFun shellLine = do
+  line <- maybeFirstLine shellLine
+  return $ fromMaybe "" $ fmap colourFun $ fmap lineToText line
 
 trackBranchText :: Text -> Text -> IO Text
 trackBranchText currentBranch trackBranch = do
@@ -126,8 +126,8 @@ trackBranchText currentBranch trackBranch = do
 
 trackBranchDiverged :: Text -> Text -> IO Bool
 trackBranchDiverged currentBranch trackBranch = do
-  maybeHash <- maybeFirstLine (recentNHashes trackBranch 1) :: IO (Maybe Text)
-  let trackedHash = fromMaybe "" maybeHash
+  maybeHash <- maybeFirstLine (recentNHashes trackBranch 1) :: IO (Maybe Line)
+  let trackedHash = fromMaybe "" $ fmap lineToText maybeHash
   let localHashes = recentNHashes currentBranch 100
   foundHash <- maybeFirstLine $ grep (text trackedHash) localHashes
   return $ isNothing foundHash
@@ -148,5 +148,5 @@ promptPwd = do
   let cwd = sed (text (format fp h) *> return "~") w
   fmap T.strip $ strict cwd
 
-recentNHashes :: Text -> Int -> Shell Text
+recentNHashes :: Text -> Int -> Shell Line
 recentNHashes branch limit = gitDiscardErr "log" ["-n", repr limit, "--format=%H", branch]
