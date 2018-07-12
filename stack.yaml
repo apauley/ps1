@@ -6,15 +6,13 @@ resolver: lts-7.24
 # Local packages, usually specified by relative directory name
 packages:
 - '.'
-- location:
-    git: https://github.com/apauley/git-hell
-    commit: aed02404ffa09ea289be67ced00f0612752c04ec
-- location:
-    git: https://github.com/apauley/hsh
-    commit: cec04060167106973cf0a5c56948c6fd311544f4
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
-extra-deps: []
+extra-deps:
+- git: https://github.com/apauley/git-hell
+  commit: a1dab844d253ed5173b233441ae07ce8008b2910
+- git: https://github.com/apauley/hsh
+  commit: 35fe68c8af15a756213ea147a80e3ba2905500e3
 
 # Override default flag values for local packages and extra-deps
 flags: {}
