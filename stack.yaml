@@ -9,10 +9,10 @@ packages:
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
-- git: https://github.com/apauley/git-hell
-  commit: 50eebcbb195b01a5b8d5f9d0e0f31bc1faccdd43
 - git: https://github.com/apauley/hsh
   commit: 49ac8c58c30fbad7f81d02e8eac7d5bbaa4d66fd
+- git: https://github.com/apauley/git-hell
+  commit: 2b7b2f49a87a00945bd46d7290a340dab431ce73
 
 # Override default flag values for local packages and extra-deps
 flags: {}
