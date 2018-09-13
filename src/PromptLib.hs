@@ -75,7 +75,7 @@ getTimeLine = do
   now  <- Time.getZonedTime
   cols <- terminalColumns
   let time = T.pack $ TF.formatTime TF.defaultTimeLocale "%a %b %d, %Y %H:%M:%S" now
-  let line = T.justifyRight (cols-1) '-' $ format (" "%s) time
+  let line = T.justifyRight (cols-1) '‒' $ format (" "%s) time
   return $ (darkGreyFG line) <> "\n"
 
 getGitLines :: Text -> Maybe Text -> Text -> IO Text
